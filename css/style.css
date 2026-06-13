@@ -167,26 +167,33 @@ body.light .chip.sel { border-color: var(--spiral-ink); background: rgba(29, 158
   padding: 0 1.5rem;
 }
 
-.steps { grid-column: 1; grid-row: 1; padding: 14vh 0 10vh; }
+.steps { grid-column: 1; grid-row: 1; padding: 12vh 0 8vh; }
 
 .stage { grid-column: 2; grid-row: 1; }
 
 .step {
   max-width: 32rem;
-  margin: 0 0 48vh;
-  opacity: 0.95;
+  margin: 0 0 36vh;
 }
 
-body.js .step { opacity: 0.3; transition: opacity 0.5s ease; }
+body.js .step { opacity: 0.5; transition: opacity 0.5s ease; }
 body.js .step.active { opacity: 1; }
+
+.step:last-child { margin-bottom: 18vh; }
 
 .step h2 { margin-top: 0; }
 
-.stage { position: sticky; top: 0; height: 100vh; display: flex; align-items: center; justify-content: center; align-self: start; }
+.stage {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  align-self: start;
+}
 
 .stage-inner { width: 100%; max-width: 620px; text-align: center; }
-
-body.js .stage-inner { opacity: 0; }
 
 .stage svg { width: 100%; height: auto; max-height: 84vh; display: block; }
 
@@ -201,7 +208,7 @@ body.js .stage-inner { opacity: 0; }
 
 .stage-note.shown { opacity: 1; }
 
-/* ------- svg ------- */
+/* ------- svg: loop ------- */
 .node circle {
   fill: var(--node-fill);
   stroke: var(--loop);
@@ -215,6 +222,11 @@ body.js .stage-inner { opacity: 0; }
 
 .arc { stroke: var(--loop); fill: none; }
 
+/* class-based reveals — reversible, can't get stuck mid-tween */
+body.js .node, body.js .arc { opacity: 0; }
+.node, .arc { transition: opacity 0.8s ease; }
+body.js .node.on, body.js .arc.on { opacity: 1; }
+
 #pulse { fill: var(--loop-bright); }
 
 #centerLabel {
@@ -224,9 +236,21 @@ body.js .stage-inner { opacity: 0; }
   fill: var(--ink-dim);
   text-anchor: middle;
   dominant-baseline: central;
+  opacity: 0;
+  transition: opacity 1s ease;
 }
 
-#spiral { stroke: var(--spiral-ink); fill: none; stroke-width: 2.6; stroke-linecap: round; }
+#centerLabel.on { opacity: 1; }
+
+/* ------- svg: spiral (the grace state) ------- */
+#loopGraph { transition: opacity 1.2s ease; }
+
+#spiralGraph { opacity: 0; transition: opacity 1.2s ease; }
+
+.stage-inner.spiraled #loopGraph { opacity: 0; pointer-events: none; }
+.stage-inner.spiraled #spiralGraph { opacity: 1; }
+
+#spiral { stroke: var(--spiral-ink); fill: none; stroke-width: 2.6; stroke-linecap: round; transition: stroke-dashoffset 2.4s ease; }
 
 #fruits text {
   font-family: "Newsreader", Georgia, serif;
@@ -234,7 +258,16 @@ body.js .stage-inner { opacity: 0; }
   font-size: 17px;
   fill: var(--spiral-ink);
   dominant-baseline: central;
+  opacity: 0;
+  transition: opacity 0.9s ease;
 }
+
+.stage-inner.spiraled #fruits text { opacity: 1; }
+.stage-inner.spiraled #fruits text:nth-of-type(2) { transition-delay: 0.25s; }
+.stage-inner.spiraled #fruits text:nth-of-type(3) { transition-delay: 0.5s; }
+.stage-inner.spiraled #fruits text:nth-of-type(4) { transition-delay: 0.75s; }
+.stage-inner.spiraled #fruits text:nth-of-type(5) { transition-delay: 1s; }
+.stage-inner.spiraled #fruits text:nth-of-type(6) { transition-delay: 1.25s; }
 
 /* ------- reveals ------- */
 .beat { opacity: 0; max-height: 0; overflow: hidden; transition: opacity 0.9s ease, max-height 0.9s ease; margin: 0; }
@@ -244,7 +277,7 @@ body.js .stage-inner { opacity: 0; }
 .note.shown { opacity: 1; }
 
 .post-grace { opacity: 0.25; transition: opacity 1.4s ease; }
-.post-grace.revealed { opacity: 1; }
+body.past-grace .post-grace { opacity: 1; }
 
 /* ------- acceptance meter ------- */
 .meter-wrap { margin: 1.4rem 0 0.6rem; }
@@ -285,7 +318,10 @@ footer {
 /* ------- responsive ------- */
 @media (max-width: 880px) {
   .scrolly { display: block; }
+  .steps { grid-column: auto; grid-row: auto; padding-top: 6vh; }
   .stage {
+    grid-column: auto;
+    grid-row: auto;
     height: 46vh;
     top: 0;
     z-index: 5;
@@ -294,7 +330,6 @@ footer {
     border-bottom: 1px solid var(--line);
   }
   .stage svg { max-height: 38vh; }
-  .steps { padding-top: 6vh; }
   .step { margin-bottom: 26vh; }
   .act { padding: 12vh 1.25rem; }
 }

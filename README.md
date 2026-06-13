@@ -23,9 +23,11 @@ Internet is needed on first load (GSAP and the Newsreader font load from CDNs).
 
 ## Structure
 
-- `js/loop-engine.js` — animation primitives for the SVG loop (build, run, willpower, relabel, grace → spiral).
-- `js/main.js` — scroll choreography (GSAP ScrollTrigger), personalization, interactive moments.
-- `css/style.css` — design system. Dark and tightening through Act 4.5 (`body.deep`, `body.deepest`), light after grace (`body.light`).
+- `js/loop-engine.js` — diagram primitives for the SVG loop. Scroll-driven visual state is set with CSS classes (`.on`, `.spiraled`) so it's deterministic and reversible; only the button-driven one-shots (run, willpower, the acceptance meter) use GSAP.
+- `js/main.js` — one `update()` function derives the entire visual state from scroll position on every frame (background zone, node build-up, earning relabel, the `incurvatus` label, the grace morph). Because state is recomputed rather than latched, scrolling up reverses everything cleanly. Plus personalization and the interactive moments.
+- `css/style.css` — design system. Dark and tightening through Act 4.5 (`body.deep`, `body.deepest`), light after grace (`body.light` + `body.past-grace`).
+
+Asset links in `index.html` carry a `?v=N` query for cache-busting — bump it when you change `style.css` or the JS so returning visitors don't get stale cached files.
 
 The eight acts: hook → the need → the subscription → the loop → willpower fails → the respectable loop → the exit → the spiral → walking it out.
 
